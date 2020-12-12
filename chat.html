@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <title>Document</title>
+</head>
+<body>
+    <div id="login">
+        <h3>ingresa tu nombre:</h3>
+        <input type="text" id="usuario">
+        <br/>
+        <input type="button" value="ingrese al chat" id="btn-ingresar">
+    </div>
+    <div id="chat">
+        <div id="chat-mensajes">
+            Bienvenido al chat ! <br/>
+        </div>
+        <div id="test">
+
+        </div>
+        <div id="chat-escribir">
+            <input type="text" id="txt-mensaje">
+            <input type="button" value="enviar" id="btn-enviar">
+        </div>
+    </div>
+</body>
+<script src="/socket.io/socket.io.js" ></script>
+<script>
+    var socket= io();
+
+    $(document).ready(function(){
+        $('login').fadeIn(500);
+    });
+
+    $('#btn-ingresar').click(function(){
+        var user = $('#usuario').val();
+        if (user == ''){
+            alert('debe escribir un nombre');
+        }
+        else{
+
+            socket.emit('crearUsuario', user);  
+
+            $('#login').fadeOut(500, function(){
+                $('#chat').fadeIn(500);
+            });
+        }
+    })
+
+    $('#txt-mensaje').keypress(function(event){
+        if(event.which==13){
+            $('#btn-enviar').click();
+        }
+    })
+
+    $('#btn-enviar').click(function(){
+        var mensaje = $('#txt-mensaje').val();
+        if(mensaje!=''){
+            $('#txt-mensaje').val('');
+            socket.emit('mensajeNuevo', mensaje)
+        }
+    })
+
+    socket.on('mensaje', function(data){
+        var nuevoMensaje = '<b>' + data.usuario + ' dijo: </b>' + data.mensaje;
+        $('#chat-mensajes').append(nuevoMensaje + '<br/>');
+    })
+
+    
+</script>
+</html>
