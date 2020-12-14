@@ -1,6 +1,8 @@
 const app = require('express')();
 const http = require('http').Server(app);
 const io = require('socket.io')(http);
+const bodyParser = require('body-parser');
+
 
 const crypto = require('crypto');
 const iv = crypto.randomBytes(16);
@@ -49,13 +51,23 @@ module.exports = {cifrar, descifrar}
   // Decrypts output 
  // console.log("info descifrada: "+ descifrar(output)); 
 
+app.use(bodyParser.urlencoded({extended: false}));
+app.use(bodyParser.json());
+
 app.get('/', function(req, res){
     res.sendFile(__dirname + '/chat.html');
 });
 
-http.listen(3000, function(){
-    console.log('sv en puerto 3000');
-})
+
+
+// test de ajax 
+
+app.post('/', function(req, res){
+	var obj = {};
+	console.log('body: ' + JSON.stringify(req.body));
+	res.send(req.body);
+});
+
 
 io.on('connection', function(socket){
     console.log('se conecto un usuario');
@@ -79,3 +91,7 @@ io.on('connection', function(socket){
     })
 })
 
+
+http.listen(3000, function(){
+    console.log('sv en puerto 3000');
+})

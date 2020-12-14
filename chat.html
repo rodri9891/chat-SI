@@ -28,6 +28,8 @@
 </body>
 <script src="/socket.io/socket.io.js" ></script>
 <script>
+// parte de socket.io
+
     var socket= io();
 
     $(document).ready(function(){
@@ -61,6 +63,21 @@
             $('#txt-mensaje').val('');
             socket.emit('mensajeNuevo', mensaje)
         }
+                        var data = {};
+                        data.title = "titulo";
+                        data.message = "mensaje";
+                        
+                        $.ajax({
+                            type: 'POST',
+                            data: JSON.stringify(data),
+                            contentType: 'application/json',
+                            url: 'http://localhost:3000/',						
+                            success: function(data) {
+                                console.log('success');
+                                console.log(JSON.stringify(data));
+                            }
+                        });
+
     })
 
     socket.on('mensaje', function(data){
